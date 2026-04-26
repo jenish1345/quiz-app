@@ -1,0 +1,56 @@
+plugins {
+    id 'base'
+    id 'com.github.node-gradle.node' version '7.0.2'
+}
+
+group = 'com.quizapp'
+version = '0.0.0'
+
+node {
+    version = '20.11.0'
+    npmVersion = '10.2.4'
+    download = true
+    workDir = file("${project.buildDir}/nodejs")
+    npmWorkDir = file("${project.buildDir}/npm")
+}
+
+task installDependencies(type: NpmTask) {
+    description = 'Install npm dependencies'
+    args = ['install']
+}
+
+task dev(type: NpmTask) {
+    description = 'Run development server'
+    dependsOn installDependencies
+    args = ['run', 'dev']
+}
+
+task buildApp(type: NpmTask) {
+    description = 'Build the application'
+    dependsOn installDependencies
+    args = ['run', 'build']
+    inputs.files(fileTree('src'))
+    inputs.file('package.json')
+    inputs.file('package-lock.json')
+    inputs.file('vite.config.js')
+    outputs.dir('dist')
+}
+
+task lint(type: NpmTask) {
+    description = 'Run ESLint'
+    dependsOn installDependencies
+    args = ['run', 'lint']
+}
+
+task preview(type: NpmTask) {
+    description = 'Preview production build'
+    dependsOn buildApp
+    args = ['run', 'preview']
+}
+
+task clean(type: Delete) {
+    description = 'Clean build artifacts'
+    delete 'dist', 'node_modules', '.gradle', 'build'
+}
+
+build.dependsOn buildApp
