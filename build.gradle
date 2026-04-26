@@ -7,8 +7,8 @@ group = 'com.quizapp'
 version = '0.0.0'
 
 node {
-    version = '20.11.0'
-    npmVersion = '10.2.4'
+    version = '22.12.0'
+    npmVersion = '10.9.0'
     download = true
     workDir = file("${project.buildDir}/nodejs")
     npmWorkDir = file("${project.buildDir}/npm")
@@ -48,9 +48,8 @@ task preview(type: NpmTask) {
     args = ['run', 'preview']
 }
 
-task clean(type: Delete) {
-    description = 'Clean build artifacts'
-    delete 'dist', 'node_modules', '.gradle', 'build'
+clean {
+    delete 'dist', 'node_modules'
 }
 
 build.dependsOn buildApp
